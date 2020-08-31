@@ -5,22 +5,26 @@ prog() {
     local w=80 p=$1;  shift
     # create a string of spaces, then change them to dots
     printf -v dots "%*s" "$(( $p*$w/100 ))" ""; dots=${dots// /#};
-    # print those dots on a fixed-width space plus the percentage etc. 
+    # print those # on a fixed-width space plus the percentage etc. 
     printf "\r\e[K|%-*s| %3d %% %s" "$w" "$dots" "$p" "$*"; 
 }
 # test loop
 for x in {1..100} ; do
     prog "$x" Reading Data...
-    sleep .1   # do some work here
+    sleep .055   # do some work here
 done ; echo
 
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
+echo " Wait ......."
+
+
+## start of script 
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
 echo "		$(date)"  >> TrackTW.txt
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt 
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt 
 echo "		TRACK TIME_WAIT AND ESTABLISHED CONNECTIONS"  >> TrackTW.txt
-echo "------------------------------------------------------------------------------" >> TrackTW.txt 
+echo "--------------------------------------------------------------------------------" >> TrackTW.txt 
 echo "Proto Recv-Q Send-Q Local Address           Foreign Address         State "     >> TrackTW.txt
-echo "------------------------------------------------------------------------------" >> TrackTW.txt
+echo "--------------------------------------------------------------------------------" >> TrackTW.txt
 
 #get records into the text file
 netstat >> Track_TW.txt
@@ -37,18 +41,19 @@ Config_threshold=2
 if [ "$countTWconn" -ge "$Config_threshold" ] 
 then
  echo "$(cat Track_TW.txt | grep "TIME_WAIT" )"  >> TrackTW.txt 
- echo "------------------------------------------------------------------------------" >> TrackTW.txt
+ echo "--------------------------------------------------------------------------------" >> TrackTW.txt
  echo "$(cat Track_TW.txt | grep "ESTABLISHED" )" >> TrackTW.txt
- echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
+ echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
  #get total count of TIME_WAIT and ESTABLISHED Connections. 
  echo "Total no of TIME_WAIT Connection: $countTWconn" >> TrackTW.txt
  echo "Total no of ESTABLISHED Connection: $countEstablishedconn" >> TrackTW.txt
- echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
+ echo "Total Connections are: `expr $countTWconn + $countEstablishedconn`" >> TrackTW.txt
+ echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
  
 else 
  #if there is no TIME_WAIT connections. 
- echo "There is no TIME_WAIT connections  "   >> TrackTW.txt
+ echo "There are less than Config_threshold TIME_WAIT connections  "   >> TrackTW.txt
  echo "All the connections are ESTABLISHED Successfully  ._. "   >> TrackTW.txt
- echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
+ echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> TrackTW.txt
 fi
- echo "Done"     
+ echo " Data Read Completely ._."     
